@@ -101,7 +101,7 @@ filetypes = [".mp3", ".flac"]
 
 --make it a bit harder for user to delete all their important files...
 canDelete :: [String] 
-canDelete = [".jpg", ".png", ".txt", ".nfo", ".jpeg", ".cue"]
+canDelete = [".jpg", ".png", ".txt", ".nfo", ".jpeg", ".cue", ".log"]
 
 areAnyEmpty :: SongInfo -> Bool
 areAnyEmpty info = any null [artist info, album info, title info]
