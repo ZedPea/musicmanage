@@ -17,8 +17,7 @@ data SongInfo = SongInfo {
 main :: IO ()
 main = do
     cwd <- getCurrentDirectory
-    foo <- filter isSong <$> execWriterT (getFiles cwd)
-    let files = filter isSong foo
+    files <- filter isSong <$> execWriterT (getFiles cwd)
     mapM_ getSongInfoAndRename files
     cleanUp cwd
 
