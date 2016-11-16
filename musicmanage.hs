@@ -54,10 +54,8 @@ getNewPathIfPossible :: FilePath -> FilePath -> SongInfo -> Maybe FilePath
 getNewPathIfPossible path cwd info
     | areAnyEmpty info || path == newpath = Nothing
     | otherwise = Just newpath
-    where newpath = joinPath components <.> extension
-          components = [cwd,rs $ artist info,rs $ album info,rs $ title info]
-          rs = removeSlash
-          extension = takeExtension path
+    where newpath = joinPath components <.> takeExtension path
+          components = cwd : [removeSlash $ x info | x <- [artist,album,title]]
 
 renameSong :: FilePath -> FilePath -> IO ()
 renameSong path newpath = do
