@@ -4,6 +4,7 @@ import System.Directory
 import System.FilePath (takeExtension, takeDirectory, (</>), (<.>), joinPath)
 import Control.Exception (catch)
 import Text.Printf (printf)
+import Data.Char (toLower)
 import Control.Monad.Trans.Maybe
 import Control.Monad.Trans (liftIO)
 import Control.Monad.Writer (WriterT, tell, execWriterT)
@@ -73,7 +74,8 @@ cleanUp path = do
             mapM_ cleanUp paths
             newfiles <- listDirectory path
             when (null newfiles) $ removeDirectory path
-        else when (takeExtension path `elem` canDelete) $ removeFile path
+        else when (map toLower (takeExtension path) `elem` canDelete)
+                  $ removeFile path
 
 getSongInfo :: (TagLib.Tag,TagLib.TagFile) -> IO SongInfo
 getSongInfo (t,tagfile) = do
