@@ -55,7 +55,7 @@ getNewPathIfPossible path cwd info
     | areAnyEmpty info || path == newpath = Nothing
     | otherwise = Just newpath
     where newpath = joinPath components <.> takeExtension path
-          components = cwd : [removeSlash $ x info | x <- [artist,album,title]]
+          components = cwd : [fixBadChars $ x info | x <- [artist,album,title]]
 
 renameSong :: FilePath -> FilePath -> IO ()
 renameSong path newpath = do
@@ -86,11 +86,20 @@ getSongInfo (t,tagfile) = do
 handler :: IOError -> IO ()
 handler e = putStr "Error renaming file: " >> print e
 
--- '/' will mess up the desired paths
-removeSlash :: String -> String
-removeSlash = map f
-    where f '/' = '-'
-          f c = c
+--NTFS gets mad if filenames have some odd characters
+fixBadChars :: String -> String
+fixBadChars foo = fixBadChars' foo []
+    where fixBadChars' [] acc = acc
+          fixBadChars' (x:xs) acc
+            | x `elem` replaceChars = fixBadChars' xs (acc ++ "-")
+            | x `elem` removeChars = fixBadChars' xs acc
+            | otherwise = fixBadChars' xs (acc ++ [x])
+
+removeChars :: String
+removeChars = ['<', '>', '\"', '?', '|', '*']
+
+replaceChars :: String
+replaceChars = [':', '/', '\\']
 
 --make it easy to expand to other filetypes
 filetypes :: [String]
