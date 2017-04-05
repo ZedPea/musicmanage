@@ -88,14 +88,21 @@ getSongInfo (t,tagfile) = do
 handler :: IOError -> IO ()
 handler e = putStr "Error renaming file: " >> print e
 
---NTFS gets mad if filenames have some odd characters
+{- NTFS gets mad if filenames have some odd characters, and a fullstop at the
+end of a filename breaks it completely -}
 fixBadChars :: String -> String
-fixBadChars foo = fixBadChars' foo []
+fixBadChars s = removeTrailingDot $ fixBadChars' s []
     where fixBadChars' [] acc = acc
           fixBadChars' (x:xs) acc
             | x `elem` replaceChars = fixBadChars' xs (acc ++ "-")
             | x `elem` removeChars = fixBadChars' xs acc
             | otherwise = fixBadChars' xs (acc ++ [x])
+          removeTrailingDot [] = []
+          removeTrailingDot [x] = [x]
+          removeTrailingDot xs
+            | last xs == '.' = init xs
+            | otherwise = xs
+          
 
 removeChars :: String
 removeChars = ['<', '>', '\"', '?', '|', '*']
