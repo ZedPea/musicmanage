@@ -79,8 +79,8 @@ cleanUp path = do
 
 getSongInfo :: (TagLib.Tag,TagLib.TagFile) -> IO SongInfo
 getSongInfo (t,tagfile) = do
-    artist' <- TagLib.artist t
-    album' <- TagLib.album t
+    artist' <- removeTrailingDot <$> TagLib.artist t
+    album' <- removeTrailingDot <$> TagLib.album t
     title' <- TagLib.title t
     TagLib.save tagfile
     return (SongInfo artist' album' title')
@@ -91,17 +91,18 @@ handler e = putStr "Error renaming file: " >> print e
 {- NTFS gets mad if filenames have some odd characters, and a fullstop at the
 end of a filename breaks it completely -}
 fixBadChars :: String -> String
-fixBadChars s = removeTrailingDot $ fixBadChars' s []
+fixBadChars s = fixBadChars' s []
     where fixBadChars' [] acc = acc
           fixBadChars' (x:xs) acc
             | x `elem` replaceChars = fixBadChars' xs (acc ++ "-")
             | x `elem` removeChars = fixBadChars' xs acc
             | otherwise = fixBadChars' xs (acc ++ [x])
-          removeTrailingDot [] = []
-          removeTrailingDot [x] = [x]
-          removeTrailingDot xs
-            | last xs == '.' = init xs
-            | otherwise = xs
+
+removeTrailingDot :: String -> String
+removeTrailingDot xs
+    | length xs <= 1 = xs
+    | last xs == '.' = init xs
+    | otherwise = xs
           
 
 removeChars :: String
