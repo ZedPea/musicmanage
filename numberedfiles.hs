@@ -12,7 +12,8 @@ import Control.Monad.Writer (WriterT, tell, execWriterT)
 data SongInfo = SongInfo { 
     artist :: String,
     album :: String,
-    title :: String
+    title :: String,
+    trackNum :: Integer
 }
 
 main :: IO ()
@@ -54,7 +55,11 @@ getNewPathIfPossible path cwd info
     | areAnyEmpty info || path == newpath = Nothing
     | otherwise = Just newpath
     where newpath = joinPath components <.> takeExtension path
-          components = cwd : [fixBadChars $ x info | x <- [artist,album,title]]
+          components = cwd : [artist info, album info, trackString ++ title info]
+          num = trackNum info
+          trackString
+            | num < 10 = "0" ++ show num ++ " - "
+            | otherwise = show num ++ " - "
 
 renameSong :: FilePath -> FilePath -> IO ()
 renameSong path newpath = do
@@ -77,10 +82,11 @@ cleanUp path = do
 
 getSongInfo :: TagLib.Tag -> IO SongInfo
 getSongInfo t = do
-    artist' <- removeTrailingDot <$> TagLib.artist t
-    album' <- removeTrailingDot <$> TagLib.album t
-    title' <- TagLib.title t
-    return (SongInfo artist' album' title')
+    artist' <- fixBadChars . removeTrailingDot <$> TagLib.artist t
+    album' <- fixBadChars . removeTrailingDot <$> TagLib.album t
+    title' <- fixBadChars <$> TagLib.title t
+    diskNum' <- TagLib.track t
+    return (SongInfo artist' album' title' diskNum')
 
 handler :: IOError -> IO ()
 handler e = putStr "Error renaming file: " >> print e
@@ -100,7 +106,6 @@ removeTrailingDot xs
     | length xs <= 1 = xs
     | last xs == '.' = init xs
     | otherwise = xs
-          
 
 removeChars :: String
 removeChars = ['<', '>', '\"', '?', '|', '*']

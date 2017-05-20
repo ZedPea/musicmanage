@@ -1,0 +1,18 @@
+#!/bin/bash
+echo "Running musicmanage..."
+
+if hash musicmanage 2>/dev/null; then
+    musicmanage
+else
+    ./musicmanage
+fi
+
+echo "Running disc2track..."
+
+if hash disc2track.exe 2>/dev/null; then
+    disc2track.exe
+else
+    ./disc2track.exe
+fi
+
+echo "Done!"
