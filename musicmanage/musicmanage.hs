@@ -44,7 +44,6 @@ getFiles path = do
         mapM_ getFiles paths
     else tell [path]
 
---get a tag and tagfile out of the annoying wrapping if possible
 getTagFiles :: FilePath -> MaybeT IO (TagLib.Tag, TagLib.TagFile)
 getTagFiles path = do
     maybeTagFile <- MaybeT $ TagLib.open path
@@ -105,7 +104,6 @@ removeTrailingDot xs
     | last xs == '.' = init xs
     | otherwise = xs
           
-
 removeChars :: String
 removeChars = ['<', '>', '\"', '?', '|', '*']
 
