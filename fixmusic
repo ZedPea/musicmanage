@@ -1,0 +1,20 @@
+#!/bin/bash
+echo "Running musicmanage..."
+
+if hash musicmanage 2>/dev/null; then
+    musicmanage
+else
+    echo "musicmanage not found, please add ~/.local/bin to your path variable"
+    exit
+fi
+
+echo "Running disc2track..."
+
+if hash disc2track.exe 2>/dev/null; then
+    disc2track.exe
+else
+    echo "disc2track.exe not found, please move it to your /usr/bin/ or equivalent directory"
+    exit
+fi
+
+echo "Done!"

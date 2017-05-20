@@ -1,3 +1,4 @@
-musicmanage
 *.sock
 *.swp
+*.stack-work
+*.exe

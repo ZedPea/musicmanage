@@ -29,10 +29,10 @@ getSongInfoAndRename path = do
     case maybeTagFiles of
         Nothing -> return ()
         Just files -> do
-        info <- getSongInfo files
-        case getNewPathIfPossible path cwd info of
-            Just newpath -> renameSong path newpath
-            Nothing -> return ()
+            info <- getSongInfo files
+            case getNewPathIfPossible path cwd info of
+                Just newpath -> renameSong path newpath
+                Nothing -> return ()
 
 getFiles :: FilePath -> WriterT [FilePath] IO ()
 getFiles path = do
@@ -82,6 +82,7 @@ getSongInfo (t,tagfile) = do
     artist' <- removeTrailingDot <$> TagLib.artist t
     album' <- removeTrailingDot <$> TagLib.album t
     title' <- TagLib.title t
+    --don't remove this line - it closes the file!
     TagLib.save tagfile
     return (SongInfo artist' album' title')
 

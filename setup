@@ -1,0 +1,25 @@
+#!/bin/bash
+if hash stack 2>/dev/null; then
+    echo "Installing musicmanage and numberedfiles..."
+    stack setup
+    stack install
+else
+    echo "Please install stack, then rerun this script."
+    exit
+fi
+
+if [ ! -f /usr/lib/mono/taglib-sharp/taglib-sharp.dll ]; then
+    echo "/usr/lib/mono/taglib-sharp/taglib-sharp.dll not found! Please install taglib-sharp, or edit this script to point to the location of your taglib-sharp.dll, then rerun this script."
+    exit
+else
+    echo "Installing disc2track..."
+    mcs disc2track/disc2track.cs -R:/usr/lib/mono/taglib-sharp/taglib-sharp.dll
+
+    echo "Copying disc2track to your /usr/bin/ directory..."
+    sudo cp disc2track/disc2track.exe /usr/bin/disc2track.exe
+fi
+
+echo "Copying fixmusic to your /usr/bin/ directory..."
+sudo cp fixmusic /usr/bin/fixmusic
+
+echo "Done!"
