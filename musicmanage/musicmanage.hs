@@ -78,9 +78,9 @@ cleanUp path = do
 
 getSongInfo :: (TagLib.Tag,TagLib.TagFile) -> IO SongInfo
 getSongInfo (t,tagfile) = do
-    artist' <- removeTrailingDot <$> TagLib.artist t
-    album' <- removeTrailingDot <$> TagLib.album t
-    title' <- TagLib.title t
+    artist' <- handleLeadingDot . removeTrailingDot <$> TagLib.artist t
+    album' <- handleLeadingDot . removeTrailingDot <$> TagLib.album t
+    title' <- handleLeadingDot <$> TagLib.title t
     --don't remove this line - it closes the file!
     TagLib.save tagfile
     return (SongInfo artist' album' title')
@@ -102,6 +102,11 @@ removeTrailingDot :: String -> String
 removeTrailingDot xs
     | length xs <= 1 = xs
     | last xs == '.' = init xs
+    | otherwise = xs
+
+handleLeadingDot :: String -> String
+handleLeadingDot xs
+    | head xs == '.' = '-' : xs
     | otherwise = xs
           
 removeChars :: String
