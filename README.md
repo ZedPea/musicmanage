@@ -1,5 +1,7 @@
 # musicmanage
 
+Beets is way better, but this was fun anyway. Probably not going to add any more to it.
+
 ### musicmanage.hs
 
 musicmanage.hs renames files based on id3 tags, to the form /artist/album/songname.extension.
